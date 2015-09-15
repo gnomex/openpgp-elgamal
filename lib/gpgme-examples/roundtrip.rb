@@ -1,42 +1,31 @@
 #!/usr/bin/env ruby
 require 'gpgme'
 
-# If you do not have gpg-agent installed, comment out the following
-# and set it as :passphrase_callback.
-#
-# def passfunc(hook, uid_hint, passphrase_info, prev_was_bad, fd)
-#   $stderr.write("Passphrase for #{uid_hint}: ")
-#   $stderr.flush
-#   begin
-#     system('stty -echo')
-#     io = IO.for_fd(fd, 'w')
-#     io.puts(gets)
-#     io.flush
-#   ensure
-#     (0 ... $_.length).each do |i| $_[i] = ?0 end if $_
-#     system('stty echo')
-#   end
-#   $stderr.puts
-# end
+# http://tools.ietf.org/html/rfc4880
 
 unless ENV['GPG_AGENT_INFO']
   $stderr.puts("gpg-agent is not running.  See the comment in #{$0}.")
   exit(1)
 end
 
-plain = 'test test test'
-puts("Plaintext:\n#{plain}")
+plain = File.open('ipsums', "r").read
 
-# Perform symmetric encryption on PLAIN.
+file = File.open("signed.sec-for_dear_john","w+")
 crypto = GPGME::Crypto.new(:armor => true)
-cipher = crypto.encrypt(plain, {:symmetric => true,
-			  # :passphrase_callback => method(:passfunc)
-			})
-str = cipher.read
-puts("Ciphertext:\n#{str}")
+#crypto.encrypt plain, sign: true, recipients: "kenner.hp@gmail.com", output: file
 
-cipher = GPGME::Data.new(str)
-plain = crypto.decrypt(cipher, {
-			 # :passphrase_callback => method(:passfunc)
-		       })
-puts("Plaintext:\n#{plain.read}")
+crypto.encrypt plain, sign: true, recipients: "john@doe.foo", output: file
+
+decrypto = GPGME::Crypto.new(:armor => true)
+
+encrypted_data = File.open("signed.sec", "r").read
+# encrypted_cipher = GPGME::Data.new(encrypted_data)
+
+# crypto.decrypt encrypted_cipher, output: decrypted_file
+
+plain_text = decrypto.decrypt encrypted_data do |signature|
+  puts signature
+  raise "Signature could not be verified" unless signature.valid?
+end
+
+decrypted_file = File.open("plain.unsec","w+").write(plain_text)

@@ -66,3 +66,13 @@ pub   2048D/37CDBFAC 2015-09-15 [expires: 2015-09-22]
 uid                  John D (Example Elgamal Key) <john@doe.foo>
 sub   2048g/769AD774 2015-09-15 [expires: 2015-09-22]
 ```
+
+```bash
+gpg --list-keys
+gpg --import johnd.37CDBFAC.asc
+gpg --list-sigs
+gpg --list-keys
+gpg --sign-key 37CDBFAC
+gpg --list-keys
+gpg --list-sigs
+```
