@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    eventmachine (1.0.8)
+    rake (10.3.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  eventmachine (~> 1.0.8)
+  rake (~> 10.3.2)
+
+BUNDLED WITH
+   1.10.6
