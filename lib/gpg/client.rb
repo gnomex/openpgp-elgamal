@@ -1,4 +1,5 @@
 require 'socket'
+require_relative 'crypto'
 
 class Client
   def initialize( server )
@@ -28,12 +29,16 @@ class Client
     @request = Thread.new do
       loop {
         msg = $stdin.gets.chomp
-        @server.puts( msg )
+
+        sec = CRY::Crypto.encrypt(msg)
+
+        puts sec
+        
+        @server.puts( sec )
       }
     end
   end
 end
 
-#s = TCPSocket.new 'localhost', 10000
-server = TCPSocket.open "localhost", 10000 
-Client.new( server )
+#server = TCPSocket.open "localhost", 10000 
+#Client.new( server )

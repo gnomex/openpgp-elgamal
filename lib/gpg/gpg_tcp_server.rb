@@ -3,6 +3,8 @@ module CRY
   class SDServer < EM::Connection
     attr_reader :queue
 
+    @@debug = false
+
     def initialize(*args)
       super
 
@@ -48,9 +50,13 @@ module CRY
     end
 
     def handle_raw_data(data)
+      puts "[INFO] Chunk{ #{data}  } \n" if @@debug
+
       begin
         if @queue.empty?
           @queue.push data if data.include?("-----BEGIN PGP MESSAGE-----") #Start buffer
+
+          handle_pgp if data.include?("-----END PGP MESSAGE-----")
         else
           @queue.push data
           handle_pgp if data.include?("-----END PGP MESSAGE-----")
@@ -75,9 +81,18 @@ module CRY
       key = @queue.join('').to_s
       send_line "Decrypting #{key.bytesize} bytes"
 
-      Crypto.decrypt key
+      plain = Crypto.decrypt key
 
       @queue.clear
+
+      send_line "--- MESSAGE FROM SOCKET ---"
+        puts "[INFO] -- MESSAGE --" if @@debug
+
+      send_line plain 
+        puts "[INFO] -- #{plain}" if @@debug
+
+      send_line "--- END OF MESSAGE ---"
+        puts "[INFO] -- END OF MESSAGE --" if @@debug
     end
 
     # Close a connection

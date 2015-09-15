@@ -2,32 +2,24 @@ require 'gpgme'
 
 module CRY
   class Crypto
-    def ecrypt
-      plain = File.open('mussum_ipsum', "r").read
-
-      file = File.open("signed.sec","w+")
+    def self.encrypt(data_to_encrypt)
       crypto = GPGME::Crypto.new(:armor => true)
-      crypto.encrypt plain, sign: true, recipients: "kenner.hp@gmail.com", output: file
+      crypto.encrypt data_to_encrypt, sign: true, recipients: "john@doe.foo"
     end
 
     def self.decrypt(signed_message)
       begin
         decrypto = GPGME::Crypto.new(:armor => true)
-
-        #encrypted_data = File.open("signed.sec", "r").read
         encrypted_data = GPGME::Data.new(signed_message)
 
-        # crypto.decrypt encrypted_cipher, output: decrypted_file
+        #plain_text = decrypto.decrypt encrypted_data do |signature|
+         # puts signature
+          # raise "Signature could not be verified" unless signature.valid?
+        #end
 
-        plain_text = decrypto.decrypt encrypted_data do |signature|
-          puts signature
-          raise "Signature could not be verified" unless signature.valid?
-        end
-
-        puts plain_text
-
-        #decrypted_file = File.open("plain.unsec","w+").write(plain_text) 
+        decrypto.decrypt encrypted_data
       rescue Exception => e
+        puts "Ops"
         puts e.inspect
       end
     end
