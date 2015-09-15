@@ -14,7 +14,7 @@ Please select what kind of key you want:
    (4) RSA (sign only)
 Your selection? 2
 DSA keys may be between 1024 and 3072 bits long.
-What keysize do you want? (2048) 
+What keysize do you want? (2048)
 Requested keysize is 2048 bits
 Please specify how long the key should be valid.
          0 = key does not expire
@@ -68,10 +68,14 @@ sub   2048g/769AD774 2015-09-15 [expires: 2015-09-22]
 ```
 
 ```bash
+#Server
 gpg --list-keys
-gpg --import johnd.37CDBFAC.asc
+pg --output johnd.37CDBFAC.asc --export -a 37CDBFAC
+
+#Client
 gpg --list-sigs
 gpg --list-keys
+gpg --import johnd.37CDBFAC.asc
 gpg --sign-key 37CDBFAC
 gpg --list-keys
 gpg --list-sigs
