@@ -1,10 +1,10 @@
-require 'gpgme'
+# require 'gpgme'
 
-module CRY
+module GPG
   class Crypto
     def self.encrypt(data_to_encrypt)
       crypto = GPGME::Crypto.new(:armor => true)
-      crypto.encrypt data_to_encrypt, sign: true, recipients: "john@doe.foo"
+      crypto.encrypt data_to_encrypt, recipients: "kenner.hp@gmail.com"
     end
 
     def self.decrypt(signed_message)

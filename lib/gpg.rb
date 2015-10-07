@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'eventmachine'
 require 'gpgme'
 #require 'yaml'
@@ -18,7 +17,7 @@ module CRY
       Signal.trap("TERM") { EventMachine.stop }
 
       puts "Starting the server..."
-      
+
       EventMachine.start_server('0.0.0.0', 10000, SDServer)
     end
   end
